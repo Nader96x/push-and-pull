@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        background-image: url(https://w0.peakpx.com/wallpaper/818/148/HD-wallpaper-whatsapp-background-cool-dark-green-new-theme-whatsapp.jpg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container text-center">
+      <div class="row p-3 m-3">
+        <div class="col-4">
+          <div class="row border border-2 p-5 mx-3"></div>
+        </div>
+        <div class="col-8">
+          <div
+            class="row border border-2 p-5 position-relative"
+            style="height: 70vh"
+          >
+            <div class="overflow-hidden">
+              <div
+                id="conv"
+                class="row border border-2 p-5 mx-3"
+                style="height: 50vh; overflow-y: scroll"
+              ></div>
+            </div>
+            <div id="text" class="position-absolute end-0 bottom-0 my-2">
+              <form class="form-control d-flex">
+                <input
+                  type="text"
+                  class="form-control border border-2 border-dark w-75"
+                />
+                <input
+                  type="submit"
+                  class="form-control btn btn-primary mx-2 w-25"
+                  value="send"
+                />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+      const conv = document.getElementById("conv");
+      const text = document.getElementById("text");
+      const form = document.querySelector("form");
+      const input = document.querySelector("input[type=text]");
+      const btn = document.querySelector("input[type=submit]");
+      let lastTime = 0;
+      const url = "http://localhost:3000/long/notifications";
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const message = input.value;
+        console.log(message);
+        input.value = "";
+        axios
+          .post(url, {
+            body: message,
+          })
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
+
+      notify = () => {
+        axios
+          .get(url + "?1")
+          .then(({ data }) => {
+            console.log(data);
+
+            let li = document.createElement("li");
+            li.classList.add("list-group-item");
+            li.classList.add("bg-dark");
+            li.classList.add("text-white");
+            li.classList.add("my-2");
+            li.innerText = data.body;
+            conv.appendChild(li);
+            conv.scrollTo(0, conv.scrollHeight);
+            //lastTime = data.createdAt;
+
+            notify();
+          })
+          .catch((error) => {
+            notify();
+          });
+      };
+      notify();
+    </script>
+  </body>
+</html>
